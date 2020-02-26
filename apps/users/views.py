@@ -14,7 +14,6 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 # Create your views here.
 
 
-
 class LoginView(APIView):
     authentication_classes = []
     permission_classes = []
