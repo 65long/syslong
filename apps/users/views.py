@@ -12,7 +12,6 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 # Create your views here.
 
 
-
 class LoginView(APIView):
     authentication_classes = []
     def post(self, request, *args, **kwargs):

@@ -10,11 +10,15 @@ import Axios from 'axios'
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
+
+// 设置axios默认配置
 Axios.defaults.baseURL='http://118.31.12.178/api/'
+// 添加全局拦截器
 Axios.interceptors.request.use(config => {
     config.headers.token=window.sessionStorage.getItem('token')
     return config
 })
+// 挂载实例对象
 Vue.prototype.$axios = Axios
 
 
