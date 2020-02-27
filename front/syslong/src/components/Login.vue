@@ -4,19 +4,19 @@
     <div class="head-icon">
         <img src="../assets/logo.png" alt="">
     </div>
-    <el-form ref='loginForm' :model='loginForm' label-width='0px' class='login-form'>
-        <el-form-item>
+    <el-form ref='loginForm' :model='loginForm' :rules="loginRules" label-width='0px' class='login-form'>
+        <el-form-item prop="username">
             <el-input v-model='loginForm.username' placeholder='username'>
             </el-input>
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item prop="password">
             <el-input v-model='loginForm.password' placeholder='password' type='password'></el-input>
         </el-form-item>
-        
+
         <el-form-item class='login-btn'>
-            <el-button type='primary' @click='login'>submit</el-button>
-            <el-button type='info'>reset</el-button>
+            <el-button type='primary' @click='login'>登录</el-button>
+            <el-button type='info' @click="resetLoginForm">重置</el-button>
         </el-form-item>
     </el-form>
   </div>
@@ -32,20 +32,33 @@ export default {
         username: '',
         password: ''
       },
-      msg: 'Welcome to Your Vue.js App'
+      loginRules: {
+          username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' },
+            { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+          ]
+      }
     }
   },
   methods: {
     login(){
      this.$axios.post('/rbac/login', this.loginForm)
        .then(res => {
-          this.$message.success('login success')
-          window.sessionStorage.setItem('token', res.data.token)
+          this.$message.success('login success');
+          window.sessionStorage.setItem('token', res.data.token);
           this.$router.push({name: 'home'})
        })
        .catch(err => {
           this.$message.error('login failed---'+ err.message)
        })
+    },
+    resetLoginForm(){
+      this.loginForm.username = '';
+      this.loginForm.password = '';
     }
   }
 }
@@ -66,7 +79,7 @@ export default {
   border-radius: 5px;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -50%); 
+  transform: translate(-50%, -50%);
   .head-icon {
         height: 130px;
         width: 130px;
@@ -74,7 +87,7 @@ export default {
         left: 50%;
         border-radius: 50%;
         position: absolute;
-        transform: translate(-50%, -50%); 
+        transform: translate(-50%, -50%);
         img {
          height: 100%;
          width: 100%;

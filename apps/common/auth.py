@@ -7,6 +7,7 @@ from rest_framework_jwt.authentication import jwt_decode_handler
 import logging
 from users.models import UserProfile
 
+
 class SyslongAuth(BaseAuthentication):
 
     def authenticate(self, request):
