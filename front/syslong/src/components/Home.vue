@@ -25,9 +25,8 @@
                 </el-menu>
              </el-aside>
              <el-main>
-                <div v-for="item in menuList">
-                  <p>{{item}}</p>
-               </div>
+                <!--路由占位符-->
+               <router-view></router-view>
              </el-main>
         </el-container>
     </el-container>
