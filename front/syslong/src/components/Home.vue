@@ -10,13 +10,13 @@
         <el-container>
              <el-aside :width="aside_closed ? '20px': '200px'">
                 <div @click="fold_aside" class="fold-button">||||</div>
-                <el-menu background-color="#333744" text-color="#fff"
+                <el-menu background-color="#333744" text-color="#fff" router
                          :collapse="aside_closed" :collapse-transition="false" active-text-color="#409EFF">
                     <el-submenu :index='menu1.path' v-for="menu1 in menuList" :key="menu1.path">
                         <template slot='title'>
                             <span>{{menu1.name}}</span>
                         </template>
-                        <el-menu-item :index="menu2.path" v-for="menu2 in menu1.children" :key="menu2.path">
+                        <el-menu-item :index="menu1.path + menu2.path" v-for="menu2 in menu1.children" :key="menu2.path">
                             <template>
                                 <span>{{menu2.name}}</span>
                             </template>

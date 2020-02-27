@@ -33,6 +33,6 @@ class UserProfile(AbstractUser):
     role = models.ForeignKey(verbose_name='yonghujuese', to='Role', related_name='role', null=True)
     
     def __str__(self):
-        return str(self.id)
+        return self.username
 
 
