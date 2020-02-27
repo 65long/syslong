@@ -8,15 +8,20 @@
           <el-button type="info" @click="logout">登出</el-button>
         </el-header>
         <el-container>
-             <el-aside :width="aside_closed ? '20px': '200px'">
+             <el-aside :width="aside_closed ? '40px': '200px'">
                 <div @click="fold_aside" class="fold-button">||||</div>
-                <el-menu background-color="#333744" text-color="#fff" router
-                         :collapse="aside_closed" :collapse-transition="false" active-text-color="#409EFF">
+                <!--router属性开启路由模式，跳向index属性绑定的值-->
+                <!--unique-opened 保持只有一个子菜单开启-->
+                <el-menu background-color="#333744" text-color="#fff" router unique-opened
+                         :collapse="aside_closed" :collapse-transition="false" active-text-color="#409EFF"
+                         :default-active="active_path"
+                >
                     <el-submenu :index='menu1.path' v-for="menu1 in menuList" :key="menu1.path">
                         <template slot='title'>
                             <span>{{menu1.name}}</span>
                         </template>
-                        <el-menu-item :index="menu1.path + menu2.path" v-for="menu2 in menu1.children" :key="menu2.path">
+                        <el-menu-item :index="menu2.path" v-for="menu2 in menu1.children"
+                                      :key="menu2.path" @click="saveActivePath(menu2.path)">
                             <template>
                                 <span>{{menu2.name}}</span>
                             </template>
@@ -25,7 +30,7 @@
                 </el-menu>
              </el-aside>
              <el-main>
-                <!--路由占位符-->
+                <!--路由占位符,主题区域的-->
                <router-view></router-view>
              </el-main>
         </el-container>
@@ -38,11 +43,13 @@ export default {
   data () {
     return {
       aside_closed: false,
+      active_path: '',
       menuList: []
     }
   },
   created(){
-    this.getMenu()
+    this.getMenu();
+    this.active_path = window.sessionStorage.getItem('active_path')
   },
   methods: {
     getMenu(){
@@ -62,6 +69,10 @@ export default {
     logout(){
       window.sessionStorage.clear();
       this.$router.push({name: 'login'})
+    },
+    saveActivePath(active_path){
+      // 保存当前的激活的位置，防止用户刷新丢失当前激活菜单
+      window.sessionStorage.setItem('active_path', active_path)
     }
   }
 }
