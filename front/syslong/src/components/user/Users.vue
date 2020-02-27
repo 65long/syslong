@@ -19,13 +19,63 @@
               <el-button type="primary">新增用户</el-button>
           </el-col>
         </el-row>
+        <!--数据表格区域-->
+        <el-table
+          :data="userList"
+          style="width: 100%"
+          stripe border>
+          <el-table-column type="index"></el-table-column>
+
+          <el-table-column prop="username" label="姓名" width="100"></el-table-column>
+          <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
+          <el-table-column prop="mobile" label="手机号" width="300"></el-table-column>
+
+          <el-table-column label="操作">
+            <template slot-scope="scope">
+              <!--修改，删除，分配角色-->
+              <el-button type="primary" icon="el-icon-edit" circle size="mini"></el-button>
+              <el-button type="danger" icon="el-icon-delete" circle size="mini"></el-button>
+              <!--分配角色，el-tooltip为文本提示按钮-->
+              <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
+                <el-button type="primary" icon="el-icon-setting" circle size="mini"></el-button>
+              </el-tooltip>
+            </template>
+          </el-table-column>
+
+        </el-table>
       </el-card>
     </div>
 </template>
 
 <script>
     export default {
-        name: "Users"
+        name: "Users",
+        data(){
+          return {
+            userList: [],
+            queryInfo: {
+              keyword: '',
+              page: 1,
+              size: 10,
+            }
+          }
+        },
+        created(){
+          this.getUserList();
+        },
+        methods:{
+          getUserList(){
+            this.$axios.get('rbac/users', {param: this.queryInfo})
+            .then(res => {
+              // this.$message.success('12341234');
+              this.userList = res.data;
+            })
+            .catch(err => {
+              this.$message.error('getUserList'+ err.message)
+            })
+          }
+        }
+
     }
 </script>
 
