@@ -10,3 +10,8 @@ body{
   height: 100%;
   margin: 0;
 }
+
+/*添加面包屑样式，全局*/
+.el-breadcrumb{
+  margin-bottom: 10px;
+}
