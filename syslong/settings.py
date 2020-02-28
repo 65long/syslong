@@ -142,3 +142,6 @@ STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
+# 关闭末尾为/的错误
+APPEND_SLASH=False
+
