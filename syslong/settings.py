@@ -1,3 +1,4 @@
+# encoding: utf-8
 """
 Django settings for syslong project.
 
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_jwt',
+    'django_filters',
     'corsheaders',
     'users',
 ]
@@ -47,12 +49,14 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 JWT_AUTH = {
-            'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=5)
-        }
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000)
+}
 
 REST_FRAMEWORK = {
-            'DEFAULT_AUTHENTICATION_CLASSES': ['common.auth.SyslongAuth'],
-        }
+    'DEFAULT_AUTHENTICATION_CLASSES': ['common.auth.SyslongAuth'],
+    'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
+    'PAGE_SIZE': 10,  # 每页显示多少个
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

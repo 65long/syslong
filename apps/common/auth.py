@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
@@ -20,11 +22,11 @@ class SyslongAuth(BaseAuthentication):
             username = user_dict.get('username', '')
             user = UserProfile.objects.filter(username=username).first()
         except jwt.ExpiredSignature:
-            raise AuthenticationFailed('guoqi')
+            raise AuthenticationFailed('认证过期')
         except jwt.DecodeError:
-            raise AuthenticationFailed('renzheng shibai')
+            raise AuthenticationFailed('认证失败')
         except jwt.InvalidTokenError:
-            raise AuthenticationFailed('feifa token')
+            raise AuthenticationFailed('非法认证')
         return user, token
 
 

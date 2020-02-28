@@ -5,8 +5,11 @@ from django.contrib.auth import authenticate as auth
 from django.conf import settings
 from rest_framework_jwt.settings import api_settings
 from rest_framework import status
-import jwt
+from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import WebRes, UserProfile
+from .serializer import UserSerializer
+from .filter import UserFilter
 import logging
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -56,11 +59,8 @@ class MenuView(APIView):
         return Response({'menu': temp_dic.values()})
 
 
-class UsersView(APIView):
-
-    def get(self, request, *args, **kwargs):
-        users = UserProfile.objects.all()
-        res_lst = []
-        for user in users:
-            res_lst.append(dict(username=user.username, mobile=user.mobile, nickname=user.nickname))
-        return Response(res_lst)
+class UsersView(ModelViewSet):
+    queryset = UserProfile.objects.all()
+    serializer_class = UserSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_class = UserFilter

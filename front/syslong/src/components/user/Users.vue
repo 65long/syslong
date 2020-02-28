@@ -2,7 +2,7 @@
     <div>
       <!--面包屑导航区与-->
         <el-breadcrumb separator="/">
-          <el-breadcrumb-item :to="{ path: '/users' }">首页</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
           <el-breadcrumb-item><a href="/">用户管理</a></el-breadcrumb-item>
           <el-breadcrumb-item>用户列表</el-breadcrumb-item>
         </el-breadcrumb>
@@ -11,8 +11,8 @@
         <!--搜索与添加区域-->
         <el-row :gutter="20">
           <el-col :span="7">
-              <el-input placeholder="请输入内容">
-                <el-button slot="append" icon="el-icon-search"></el-button>
+              <el-input placeholder="请输入内容" v-model="queryInfo.keyword">
+                <el-button slot="append" icon="el-icon-search" @click="searchData"></el-button>
               </el-input>
           </el-col>
           <el-col :span="3">
@@ -43,6 +43,16 @@
           </el-table-column>
 
         </el-table>
+        <!--分页功能-->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="queryInfo.page"
+          :page-sizes="[1, 5, 10, 20, 50, 100]"
+          :page-size="queryInfo.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total">
+        </el-pagination>
       </el-card>
     </div>
 </template>
@@ -56,8 +66,9 @@
             queryInfo: {
               keyword: '',
               page: 1,
-              size: 10,
-            }
+              size: 5,
+            },
+            total: 0
           }
         },
         created(){
@@ -65,15 +76,34 @@
         },
         methods:{
           getUserList(){
-            this.$axios.get('rbac/users', {param: this.queryInfo})
+            // 获取用户列表
+            this.$axios.get('rbac/users', {params: this.queryInfo})
             .then(res => {
               // this.$message.success('12341234');
-              this.userList = res.data;
+              this.userList = res.data.data;
+              this.total = res.data.total;
             })
             .catch(err => {
               this.$message.error('getUserList'+ err.message)
             })
-          }
+          },
+          // 处理每页数量改变
+          handleSizeChange(newSize){
+            this.queryInfo.size = newSize;
+            this.getUserList();
+
+          },
+          // 处理当前页码改变
+          handleCurrentChange(newPage){
+            this.queryInfo.page = newPage;
+            this.getUserList();
+          },
+          searchData(){
+            //初始化查询条件
+            this.queryInfo.page = 1;
+            this.queryInfo.size = 5;
+            this.getUserList();
+          },
         }
 
     }

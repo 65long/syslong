@@ -21,5 +21,5 @@ from .views import UsersView
 urlpatterns = [
     url(r'^login', LoginView.as_view()),
     url(r'^menu', MenuView.as_view()),
-    url(r'^users', UsersView.as_view()),
+    url(r'^users', UsersView.as_view({'get': 'list'})),
 ]
