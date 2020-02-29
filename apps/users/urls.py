@@ -18,12 +18,14 @@ from rest_framework.routers import DefaultRouter
 from .views import LoginView
 from .views import MenuView
 from .views import UsersView
+from .views import PermsView
 
 router = DefaultRouter()
 router.register('users', UsersView, basename='users_oper')
 urlpatterns = [
     url(r'^login$', LoginView.as_view()),
     url(r'^menu$', MenuView.as_view()),
+    url(r'^perms/$', PermsView.as_view()),
     # url(r'^users', UsersView.as_view({'get': 'list'})),
     url('', include(router.urls))
 ]

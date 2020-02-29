@@ -34,11 +34,14 @@
           <el-table-column label="操作">
             <template slot-scope="scope">
               <!--修改，删除，分配角色-->
-              <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="showEditDialog(scope.row.id)"></el-button>
-              <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="deleteUser(scope.row.id)"></el-button>
+              <el-button type="primary" icon="el-icon-edit" :disabled="scope.row.is_superuser"
+                         circle size="mini" @click="showEditDialog(scope.row.id)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" :disabled="scope.row.is_superuser"
+                         circle size="mini" @click="deleteUser(scope.row.id)"></el-button>
               <!--分配角色，el-tooltip为文本提示按钮-->
               <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
-                <el-button type="primary" icon="el-icon-setting" circle size="mini"></el-button>
+                <el-button type="primary" icon="el-icon-setting" :disabled="scope.row.is_superuser"
+                           circle size="mini"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>

@@ -39,7 +39,7 @@ class MenuView(APIView):
 
     def get(self, request, *args, **kwargs):
         webres = request.user.role.resource.filter(is_menu=True).all()
-        logging.info('webres-------{}'.format(webres))
+        # logging.info('webres-------{}'.format(webres))
         res = []
         temp_dic = {}
         for web in webres:
@@ -58,6 +58,21 @@ class MenuView(APIView):
                         temp_dic[web.pid.id]['children'].append(child)
 
         return Response({'menu': temp_dic.values()})
+
+
+class PermsView(APIView):
+    # authentication_classes = []
+
+    def get(self, request, *args, **kwargs):
+        webres = request.user.role.resource.filter(is_menu=True).all()
+        res = []
+        for web in webres:
+                if web.pid is None:
+                    res.append(dict(name=web.name, path=web.path, level='一级'))
+                else:
+                    res.append(dict(name=web.name, path=web.path, level='二级'))
+
+        return Response(res)
 
 
 class UsersView(ModelViewSet):
