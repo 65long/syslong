@@ -27,7 +27,7 @@ class Role(models.Model):
 
 
 class UserProfile(AbstractUser):
-    'yonghu'
+    '扩展用户表'
     nickname = models.CharField(verbose_name='xingming', max_length=200, null=True, blank=True)
     mobile = models.CharField(verbose_name='shuji', max_length=11, null=True, blank=True)
     role = models.ForeignKey(verbose_name='yonghujuese', to='Role', related_name='role', null=True)

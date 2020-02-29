@@ -7,6 +7,7 @@ from rest_framework_jwt.settings import api_settings
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters
 from .models import WebRes, UserProfile
 from .serializer import UserSerializer
 from .filter import UserFilter
@@ -62,5 +63,7 @@ class MenuView(APIView):
 class UsersView(ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filter_class = UserFilter
+    ordering_fields = ('id', )
+    ordering = ('-id', )
