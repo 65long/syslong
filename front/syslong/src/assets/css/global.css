@@ -9,6 +9,7 @@ body{
 #app{
   height: 100%;
   margin: 0;
+  min-width: 1080px;
 }
 
 /*添加面包屑样式，全局*/
@@ -22,4 +23,16 @@ body{
 }
 .el-pagination{
   margin-top: 10px;
+}
+
+.el-tag{
+  margin: 7px;
+}
+
+.bd-top{
+  border-top: 1px solid #eee;
+}
+
+.bd-bottom{
+  border-bottom: 1px solid #eee;
 }

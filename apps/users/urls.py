@@ -19,13 +19,17 @@ from .views import LoginView
 from .views import MenuView
 from .views import UsersView
 from .views import PermsView
+from .views import RoleView
+from .views import PermsListView
 
 router = DefaultRouter()
 router.register('users', UsersView, basename='users_oper')
+router.register('roles', RoleView, basename='roles_oper')
 urlpatterns = [
     url(r'^login$', LoginView.as_view()),
     url(r'^menu$', MenuView.as_view()),
     url(r'^perms/$', PermsView.as_view()),
+    url(r'^permslist/$', PermsListView.as_view()),
     # url(r'^users', UsersView.as_view({'get': 'list'})),
     url('', include(router.urls))
 ]

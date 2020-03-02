@@ -54,6 +54,7 @@ JWT_AUTH = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['common.auth.SyslongAuth'],
+    'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
     'PAGE_SIZE': 10,  # 每页显示多少个
 }
