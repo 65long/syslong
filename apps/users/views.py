@@ -61,6 +61,8 @@ class MenuView(APIView):
 
 
 class PermsListView(APIView):
+    permission_classes = []
+
     # 获取当前用户有的权限
     def get(self, request,*args, **kwargs):
         res = []
@@ -77,7 +79,6 @@ class PermsListView(APIView):
 
 
 class PermsView(APIView):
-    permission_classes = []
 
     # 用户权限数据的增删改查,针对权限本身的增删改查不提供前台接口
     def get(self, request, *args, **kwargs):
