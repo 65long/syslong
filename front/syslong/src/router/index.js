@@ -7,6 +7,8 @@ import Welcome from '@/components/Welcome'
 import Users from '@/components/user/Users'
 import Perms from '@/components/perm/Perms'
 import Roles from '@/components/perm/Roles'
+import Orders from '@/components/yewu/Orders'
+import Edevices from '@/components/device/Edevices'
 
 Vue.use(Router);
 
@@ -32,6 +34,8 @@ const router =  new Router({
         {path: '/users', component: Users},
         {path: '/perms', component: Perms},
         {path: '/roles', component: Roles},
+        {path: '/orders', component: Orders},
+        {path: '/electronic-equipment', component: Edevices},
       ]
     }
   ]

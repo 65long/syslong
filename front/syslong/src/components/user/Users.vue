@@ -28,7 +28,12 @@
 
           <el-table-column prop="username" label="姓名" width="100"></el-table-column>
           <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
-          <el-table-column prop="role" label="角色" width="100"></el-table-column>
+          <el-table-column label="角色" width="100">
+            <template slot-scope="scope">
+              <span v-if="scope.row.is_superuser">系统管理员</span>
+              <span v-else>{{scope.row.role}}</span>
+            </template>
+          </el-table-column>
           <el-table-column prop="email" label="邮箱" width="150"></el-table-column>
           <el-table-column prop="mobile" label="手机号" width="150"></el-table-column>
 

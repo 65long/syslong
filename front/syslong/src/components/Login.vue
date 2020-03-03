@@ -48,8 +48,9 @@ export default {
     login(){
      this.$axios.post('/rbac/login', this.loginForm)
        .then(res => {
-          this.$message.success('login success');
+          this.$message.success('登录成功');
           window.sessionStorage.setItem('token', res.data.token);
+          window.sessionStorage.setItem('username', res.data.username);
           this.$router.push({name: 'home'})
        })
        .catch(err => {

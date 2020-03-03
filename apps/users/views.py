@@ -38,7 +38,11 @@ class MenuView(APIView):
     permission_classes = []
 
     def get(self, request, *args, **kwargs):
-        webres = request.user.role.resource.filter(is_menu=True).all()
+        if request.user.is_superuser:
+            # 系统最高权限管理猿菜单不受分配影响，直接查数据库
+            webres = WebRes.objects.all()
+        else:
+            webres = request.user.role.resource.filter(is_menu=True).all()
         # logging.info('webres-------{}'.format(webres))
         res = []
         temp_dic = {}

@@ -5,14 +5,22 @@
             <img src="../assets/logo.png" alt="">
             <span>后台管理系统</span>
           </div>
-          <el-button type="info" @click="logout">登出</el-button>
+          <div class="header-loginstatus" v-if="active_user">
+            <span >欢迎您 {{this.active_user}}</span>
+            <el-button type="info" @click="logout" size="mini">登出</el-button>
+          </div>
+          <div class="header-loginstatus" v-else>
+            <span ><router-link :to="{name: 'login'}">请登录</router-link></span>
+          </div>
+
+
         </el-header>
         <el-container>
              <el-aside :width="aside_closed ? '40px': '200px'">
                 <div @click="fold_aside" class="fold-button">||||</div>
                 <!--router属性开启路由模式，跳向index属性绑定的值-->
                 <!--unique-opened 保持只有一个子菜单开启-->
-                <el-menu background-color="#333744" text-color="#fff" router unique-opened
+                <el-menu background-color="#373D41" text-color="#fff" router unique-opened
                          :collapse="aside_closed" :collapse-transition="false" active-text-color="#409EFF"
                          :default-active="active_path"
                 >
@@ -44,12 +52,14 @@ export default {
     return {
       aside_closed: false,
       active_path: '',
+      active_user: '',
       menuList: []
     }
   },
   created(){
     this.getMenu();
-    this.active_path = window.sessionStorage.getItem('active_path')
+    this.active_path = window.sessionStorage.getItem('active_path');
+    this.active_user = window.sessionStorage.getItem('username')
   },
   methods: {
     getMenu(){
@@ -120,5 +130,9 @@ export default {
     line-height: 24px;
     text-align: center;
     cursor: pointer;
+  }
+  .header-loginstatus{
+    font-size: 12px;
+    color: #fffee8;
   }
 </style>
