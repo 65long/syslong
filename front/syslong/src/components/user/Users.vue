@@ -305,11 +305,11 @@
               .then(res => {
                 // console.log(res.data)
                 this.editUserForm = res.data;
+                this.editDialogVisible = true;
               })
               .catch(err => {
                 this.$message.success('获取用户信息失败');
               });
-            this.editDialogVisible = true;
           },
           //提交修改信息
           submitEdit(){
@@ -383,6 +383,7 @@
               })
           },
           getRoleList(){
+            // 获取角色列表供选择
             this.$axios.get('/rbac/role-to-user/')
               .then(res => {
                 this.roleList = res.data;
