@@ -5,9 +5,10 @@ from .models import UserProfile, Role
 
 
 class UserSerializer(serializers.ModelSerializer):
+    role = serializers.CharField(max_length=100, source="role.name", read_only=True)
     class Meta:
         model = UserProfile
-        fields = ['id', 'username', 'password', 'nickname', 'mobile', 'email', 'is_superuser']
+        fields = ['id', 'username', 'password', 'nickname', 'mobile', 'email', 'is_superuser', 'role']
         extra_kwargs = {'password': {'write_only': True},
                         'id': {'read_only': True},
                         'is_superuser': {'read_only': True},
@@ -23,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
         if validated_data.get('password'):
             instance.set_password(validated_data.get('password'))
             validated_data.pop('password')
+        print(validated_data)
         obj = super(UserSerializer, self).update(instance=instance, validated_data=validated_data)
         return obj
 

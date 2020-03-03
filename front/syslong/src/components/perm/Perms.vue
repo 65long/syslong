@@ -40,7 +40,6 @@
             // 获取权限列表
             this.$axios.get('/rbac/permslist/')
               .then(res => {
-                this.$message.success('获取权限列表成功');
                 this.permsList = res.data;
               })
               .catch(err => {

@@ -26,10 +26,11 @@
           stripe border>
           <el-table-column type="index"></el-table-column>
 
-          <el-table-column prop="username" label="姓名" width="150"></el-table-column>
-          <el-table-column prop="nickname" label="昵称" width="150"></el-table-column>
-          <el-table-column prop="email" label="邮箱" width="200"></el-table-column>
-          <el-table-column prop="mobile" label="手机号" width="200"></el-table-column>
+          <el-table-column prop="username" label="姓名" width="100"></el-table-column>
+          <el-table-column prop="nickname" label="昵称" width="100"></el-table-column>
+          <el-table-column prop="role" label="角色" width="100"></el-table-column>
+          <el-table-column prop="email" label="邮箱" width="150"></el-table-column>
+          <el-table-column prop="mobile" label="手机号" width="150"></el-table-column>
 
           <el-table-column label="操作">
             <template slot-scope="scope">
@@ -41,7 +42,7 @@
               <!--分配角色，el-tooltip为文本提示按钮-->
               <el-tooltip class="item" effect="dark" content="分配角色" placement="top" :enterable="false">
                 <el-button type="primary" icon="el-icon-setting" :disabled="scope.row.is_superuser"
-                           circle size="mini"></el-button>
+                           circle size="mini" @click="showChangeRoleDialog(scope.row)"></el-button>
               </el-tooltip>
             </template>
           </el-table-column>
@@ -122,6 +123,28 @@
           <el-button type="primary" @click="submitEdit">确 定</el-button>
         </span>
       </el-dialog>
+
+      <!--更换用户角色对话框-->
+      <el-dialog
+        title="分配/修改角色"
+        :visible.sync="changeUserRoleDialogVisible"
+        width="50%">
+         <el-select v-model="roleSelect" placeholder="请选择" filterable clearable>
+            <el-option
+              v-for="role in roleList"
+              :key="role.id"
+              :label="role.name"
+              :value="role.id">
+            </el-option>
+         </el-select>
+        <!--底部按钮区域-->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="changeUserRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="submitChangeRole">确 定</el-button>
+        </span>
+      </el-dialog>
+
+
     </div>
 </template>
 
@@ -148,6 +171,9 @@
           };
           return {
             userList: [],
+            roleList: [],
+            // 选择的role
+            roleSelect: '',
             queryInfo: {
               keyword: '',
               page: 1,
@@ -158,6 +184,8 @@
             addDialogVisible: false,
             // 控制修改用户对话框的显示与否
             editDialogVisible: false,
+            // 控制更换用户角色对话框的显示与否
+            changeUserRoleDialogVisible: false,
             // 添加用户的表单
             addUserForm:{
               username: '',
@@ -331,6 +359,40 @@
                 this.$message.info('删除取消')
               })
           },
+          showChangeRoleDialog(user){
+            this.operUserId = user.id;
+            this.getRoleList();
+            // 控制分配角色对话框的开关
+            this.changeUserRoleDialogVisible = true;
+          },
+          submitChangeRole(){
+              // this.$message.success('更改角色' + this.roleSelect)
+            this.$axios.post('/rbac/role-to-user/', {user_id: this.operUserId, role_id: this.roleSelect})
+              .then(res => {
+                this.$message.success('分配角色成功');
+                this.userList.forEach(user => {
+                  if(user.id=== this.operUserId){
+                    user.role = res.data.role;
+                  }
+                });
+                this.changeUserRoleDialogVisible = false;
+
+              })
+              .catch(err => {
+                this.$message.error('分配角色失败')
+              })
+          },
+          getRoleList(){
+            this.$axios.get('/rbac/role-to-user/')
+              .then(res => {
+                this.roleList = res.data;
+                this.$message.success('获取角色列表成功')
+              })
+              .catch(err => {
+                this.$message.error('获取角色列表失败')
+              })
+          },
+
 
         }
 

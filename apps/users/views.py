@@ -236,6 +236,29 @@ class UsersView(ModelViewSet):
     ordering = ('-id', )
 
 
+class RoleToUsersView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        return self.get_roles_all()
+
+    def post(self, request, *args, **kwargs):
+        role_id = request.data.get('role_id', 0)
+        user_id = request.data.get('user_id', 0)
+        user = UserProfile.objects.filter(id=user_id).first()
+        role = Role.objects.filter(id=role_id).first()
+        if user and role:
+            user.role = role
+            user.save()
+        return Response(dict(role=getattr(role, 'name', '获取失败')))
+
+    def get_roles_all(self):
+        res_lst = []
+        role_lst = Role.objects.all()
+        for role in role_lst:
+            res_lst.append(dict(id=role.id, name=role.name))
+        return Response(res_lst)
+
+
 class RoleView(ModelViewSet):
     '角色的权限的增删改查'
     queryset = Role.objects.all()
