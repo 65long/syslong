@@ -204,11 +204,11 @@
                 {min: 6, max: 20, message: '密码长度在6-20个字符之间', trigger: 'blur'},
               ],
               email: [
-                {required: false, message: '请输入邮箱', trigger: 'blur'},
+                {required: true, message: '请输入邮箱', trigger: 'blur'},
                 {validator: checkEmail, trigger: 'blur'}
               ],
               mobile: [
-                {required: false, message: '请输入手机', trigger: 'blur'},
+                {required: true, message: '请输入手机', trigger: 'blur'},
                 {validator: checkMobile, trigger: 'blur'}
               ],
             },
@@ -222,11 +222,11 @@
                 {min: 6, max: 20, message: '密码长度在6-20个字符之间', trigger: 'blur'},
               ],
               email: [
-                {required: false, message: '请输入邮箱', trigger: 'blur'},
+                {required: true, message: '请输入邮箱', trigger: 'blur'},
                 {validator: checkEmail, trigger: 'blur'}
               ],
               mobile: [
-                {required: false, message: '请输入手机', trigger: 'blur'},
+                {required: true, message: '请输入手机', trigger: 'blur'},
                 {validator: checkMobile, trigger: 'blur'}
               ],
             },

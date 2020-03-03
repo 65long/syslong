@@ -79,6 +79,7 @@ class PermsListView(APIView):
 
 
 class PermsView(APIView):
+    '/api/rbac/perms'
 
     # 用户权限数据的增删改查,针对权限本身的增删改查不提供前台接口
     def get(self, request, *args, **kwargs):
@@ -99,10 +100,14 @@ class PermsView(APIView):
         perm_id = request.data.get('perm_id', [])
         role = Role.objects.filter(id=role_id).first()
         perms = WebRes.objects.filter(id__in=perm_id).all()
+        # 为角色重新赋权限
         if role and perms:
             role.resource.clear()
             role.resource.add(*perms)
             res_lst = self.get_perms(role)
+        # 删除角色的所有权限
+        elif role and not perms:
+            role.resource.clear()
         return Response(res_lst)
 
     def delete(self, request, *args, **kwargs):

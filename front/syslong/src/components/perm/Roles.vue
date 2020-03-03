@@ -61,6 +61,17 @@
         </el-table-column>
       </el-table>
 
+        <!--分页功能-->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="queryInfo.page"
+          :page-sizes="[1, 2, 5, 10]"
+          :page-size="queryInfo.size"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="roleTotal">
+        </el-pagination>
+
       <el-dialog
         title="分配权限"
         :visible.sync="addPermsDialogVisible"
@@ -85,6 +96,12 @@
         name: "Roles",
       data(){
           return {
+            roleTotal: 0,
+            //查询角色列表分页
+            queryInfo: {
+              page: 1,
+              size: 5,
+            },
             roleList: [],
             allPermsList: [],
             // 显示分配权限对话框
@@ -101,10 +118,22 @@
           }
       },
       methods: {
+        // 处理每页数量改变
+        handleSizeChange(newSize){
+          this.queryInfo.size = newSize;
+          this.getRoleList();
+
+        },
+        // 处理当前页码改变
+        handleCurrentChange(newPage){
+          this.queryInfo.page = newPage;
+          this.getRoleList();
+        },
         getRoleList(){
-            this.$axios.get('/rbac/roles/')
+            this.$axios.get('/rbac/roles/', {params: this.queryInfo})
               .then(res => {
                 this.roleList = res.data.data;
+                this.roleTotal = res.data.total;
               })
               .catch(err => {
                 this.$message.error('获取角色列表错误')
@@ -154,7 +183,7 @@
           const keys = [
             ...this.$refs.treeRef.getCheckedKeys(),
             ...this.$refs.treeRef.getHalfCheckedKeys()
-          ]
+          ];
           this.$axios.post('/rbac/perms/', {role_id: this.operRoleId, perm_id: keys})
             .then(res => {
               this.$message.success('分配权限成功');

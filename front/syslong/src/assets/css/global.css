@@ -9,7 +9,6 @@ body{
 #app{
   height: 100%;
   margin: 0;
-  min-width: 1080px;
 }
 
 /*添加面包屑样式，全局*/
