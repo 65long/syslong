@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000)
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1)
 }
 
 REST_FRAMEWORK = {
@@ -57,6 +57,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
     'PAGE_SIZE': 10,  # 每页显示多少个
+    'EXCEPTION_HANDLER': 'common.exception_handler.exception_handler',
 }
 
 MIDDLEWARE = [
@@ -112,6 +113,28 @@ DATABASES = {
         'PORT': '5432',  # Set to empty string for default.
     }
 }
+
+# redis缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "sessions": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+}
+
+# 设置redis存储django的session信息
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "sessions"
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

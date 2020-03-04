@@ -1,9 +1,9 @@
 # encoding: utf-8
 
+from django.core.cache import cache
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
-from django.conf import settings
 from rest_framework_jwt.authentication import BaseJSONWebTokenAuthentication
 from rest_framework_jwt.authentication import jwt_decode_handler
 import logging
@@ -20,13 +20,18 @@ class SyslongAuth(BaseAuthentication):
             # payload = jwt.decode(token, salt, True)
             user_dict = jwt_decode_handler(token)
             username = user_dict.get('username', '')
-            user = UserProfile.objects.filter(username=username).first()
+            user = cache.get(token)
+            if not user:
+                AuthenticationFailed('认证过期')
+        except AuthenticationFailed:
+            raise AuthenticationFailed('认证过期')
         except jwt.ExpiredSignature:
             raise AuthenticationFailed('认证过期')
         except jwt.DecodeError:
             raise AuthenticationFailed('认证失败')
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('非法认证')
+
         return user, token
 
 
