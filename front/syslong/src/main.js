@@ -40,6 +40,8 @@ Axios.interceptors.response.use(res=> {
       }else if (err.response.status == 401) {
         Message.error({message: '登录认证失败或登录超时！请检查后重试'});
         router.push({name: 'login'});
+      }else if (err.response.status == 406) {
+        Message.error({message: '已经限速了，请慢行！'});
       } else {
         Message.error({message: '服务器发生未知错误，请联系管理员'});
       }

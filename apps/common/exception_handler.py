@@ -9,7 +9,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.exceptions import (AuthenticationFailed, MethodNotAllowed, NotAuthenticated,
                                        PermissionDenied as RestPermissionDenied,
-                                       ValidationError)
+                                       ValidationError,
+                                       Throttled)
 from django.http import Http404
 # from component.constants import ResponseCodeStatus
 # from common.log import logger
@@ -19,6 +20,13 @@ def exception_handler(exc, content):
     if not hasattr(exc, "detail"):
         exc.detail = getattr(exc, "message", "")
     data = dict(data=None)
+    if isinstance(exc, Throttled):
+        temp_data = {
+            'message': exc.detail,
+            'code': status.HTTP_406_NOT_ACCEPTABLE,
+        }
+        data.update(temp_data)
+        return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
     if isinstance(exc, (NotAuthenticated, AuthenticationFailed)):
         temp_data = {
             'message': exc.detail,

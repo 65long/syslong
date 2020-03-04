@@ -58,6 +58,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
     'PAGE_SIZE': 10,  # 每页显示多少个
     'EXCEPTION_HANDLER': 'common.exception_handler.exception_handler',
+    #  限速设置
+    'DEFAULT_THROTTLE_CLASSES': [
+            'common.throttling.AnonRateThrottle',  # 未登陆用户
+            'common.throttling.UserRateThrottle'   # 登陆用户
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '3/minute',  # 每分钟可以请求两次
+        'user': '5/minute'  # 每分钟可以请求五次
+    },
 }
 
 MIDDLEWARE = [
