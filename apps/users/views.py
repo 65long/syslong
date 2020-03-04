@@ -38,9 +38,10 @@ class MenuView(APIView):
     permission_classes = []
 
     def get(self, request, *args, **kwargs):
+        '获取系统的菜单列表用于前端展示'
         if request.user.is_superuser:
             # 系统最高权限管理猿菜单不受分配影响，直接查数据库
-            webres = WebRes.objects.all()
+            webres = WebRes.objects.filter(is_menu=True).all()
         else:
             webres = request.user.role.resource.filter(is_menu=True).all()
         # logging.info('webres-------{}'.format(webres))
