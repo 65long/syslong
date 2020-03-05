@@ -23,10 +23,10 @@ def exception_handler(exc, content):
     if isinstance(exc, Throttled):
         temp_data = {
             'message': exc.detail,
-            'code': status.HTTP_406_NOT_ACCEPTABLE,
+            'code': status.HTTP_429_TOO_MANY_REQUESTS,
         }
         data.update(temp_data)
-        return Response(data, status=status.HTTP_406_NOT_ACCEPTABLE)
+        return Response(data, status=status.HTTP_429_TOO_MANY_REQUESTS)
     if isinstance(exc, (NotAuthenticated, AuthenticationFailed)):
         temp_data = {
             'message': exc.detail,

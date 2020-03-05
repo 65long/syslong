@@ -1,3 +1,4 @@
+# encoding: utf-8
 import datetime
 
 from django.shortcuts import render
@@ -36,7 +37,7 @@ class LoginView(APIView):
             seconds = settings.JWT_AUTH.get('JWT_EXPIRATION_DELTA', datetime.timedelta(minutes=0)).total_seconds()
             cache.set(token, user, seconds)
             return Response(data, 200)
-        data = dict(message='auth failed', status=401)
+        data = dict(message='用户名或密码错误', status=401)
         return Response(data, 401)
 
 

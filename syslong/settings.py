@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1)
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000)
 }
 
 REST_FRAMEWORK = {
@@ -64,8 +64,8 @@ REST_FRAMEWORK = {
             'common.throttling.UserRateThrottle'   # 登陆用户
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/minute',  # 每分钟可以请求两次
-        'user': '5/minute'  # 每分钟可以请求五次
+        'anon': '3/m',  # 每分钟可以请求三次
+        'user': '30/m'  # 每分钟可以请求三十次
     },
 }
 

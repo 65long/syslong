@@ -32,18 +32,19 @@ Axios.interceptors.response.use(res=> {
     return Promise.reject(res);
   }, err=> {
     Loading.service().close();
-    // console.log(err);
+    // console.log(err.response);
+    var msg = err.response.data.message;
     if (err.response.status == 500||err.response.status == 404) {
-        Message.error({message: '服务器被吃了⊙﹏⊙∥'});
+        Message.error({message: '服务器被吃了⊙﹏⊙∥:' + msg});
       } else if (err.response.status == 403) {
-        Message.error({message: '权限不足,请联系管理员!'});
+        Message.error({message: '权限不足,请联系管理员!' + msg});
       }else if (err.response.status == 401) {
-        Message.error({message: '登录认证失败或登录超时！请检查后重试'});
+        Message.error({message: '登录认证失败:' + msg});
         router.push({name: 'login'});
-      }else if (err.response.status == 406) {
-        Message.error({message: '已经限速了，请慢行！'});
+      }else if (err.response.status == 429) {
+        Message.error({message: '请勿频繁刷新！' + msg});
       } else {
-        Message.error({message: '服务器发生未知错误，请联系管理员'});
+        Message.error({message: '未知错误，请联系管理员' + msg});
       }
       // console.log(Promise.reject(err));
       return Promise.reject(err);
