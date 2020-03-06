@@ -17,7 +17,8 @@ class WebRes(models.Model):
     pid = models.ForeignKey(verbose_name='父级权限', to='self', null=True, blank=True)
                 
     def __str__(self):
-        return self.name
+        temp = str('---父级节点---' + self.pid.name) if self.pid else '---根节点'
+        return self.name + temp
 
 
 class Role(models.Model):
