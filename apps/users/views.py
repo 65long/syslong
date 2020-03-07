@@ -55,7 +55,7 @@ class MenuView(APIView):
         res = []
         temp_dic = {}
         for web in webres:
-                logging.info('web pid----%s' %web.pid)
+                # logging.info('web pid----%s' %web.pid)
                 if web.pid is None:
                     if web.id not in temp_dic:
                         temp_dic[web.id] = {'name': web.name, 'path': web.path, 'children': []}
@@ -173,10 +173,8 @@ class PermsView(APIView):
 
         temp_lst = []
         for r1 in temp_dic.values():
-            # print('r1--------', r1)
             r1_children = []
             for r2 in r1.get('children', {}).values():
-                # print('r2--------', r2)
                 r2_children = []
                 for r3 in r2.get('children', {}).values():
                     r3['children'] = []
@@ -227,10 +225,8 @@ class PermsView(APIView):
 
         temp_lst = []
         for r1 in temp_dic.values():
-            # print('r1--------', r1)
             r1_children = []
             for r2 in r1.get('children', {}).values():
-                # print('r2--------', r2)
                 r2_children = []
                 for r3 in r2.get('children', {}).values():
                     r3['children'] = []

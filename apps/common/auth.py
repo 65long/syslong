@@ -22,16 +22,15 @@ class SyslongAuth(BaseAuthentication):
             username = user_dict.get('username', '')
             user = cache.get(token)
             if not user:
-                AuthenticationFailed('认证过期')
+                raise AuthenticationFailed('认证过期')
         except AuthenticationFailed:
-            raise AuthenticationFailed('认证过期')
+            raise AuthenticationFailed('认证失败:无效用户')
         except jwt.ExpiredSignature:
             raise AuthenticationFailed('认证过期')
         except jwt.DecodeError:
-            raise AuthenticationFailed('认证失败')
+            raise AuthenticationFailed('认证失败:无效token')
         except jwt.InvalidTokenError:
             raise AuthenticationFailed('非法认证')
-
         return user, token
 
 

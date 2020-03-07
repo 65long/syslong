@@ -14,6 +14,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 import sys
 import datetime
+import logging
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
@@ -181,7 +182,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-STATIC_URL = '/api/static/'
+STATIC_URL = '/static/'
 
 # 静态文件收集的地方
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -191,3 +192,8 @@ AUTH_USER_MODEL = 'users.UserProfile'
 # 关闭末尾为/的错误
 APPEND_SLASH=False
 
+# 配置简单日志项
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(filename)s[line:%(lineno)d][func:%(funcName)s] %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    filemode='a')
