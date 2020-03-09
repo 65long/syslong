@@ -23,13 +23,13 @@ Axios.interceptors.request.use(config => {
 //  响应拦截
 Axios.interceptors.response.use(res=> {
   Loading.service().close();
-    if (res.status == 200) {
-      return res;
-    }else if(res.status == 201){
-      Message.error({message: '201错误'});
-      return Promise.reject(res);
-    }
-    return Promise.reject(res);
+    // if (res.status == 200) {
+    //   return res;
+    // }else if(res.status == 201){
+    //   Message.error({message: '201错误'});
+    //   return Promise.reject(res);
+    // }
+    return res;
   }, err=> {
     Loading.service().close();
     // console.log(err.response);
