@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'd_i0t+719xa7z-k^vs6ethvz2hw!w*^tw3f$7h0ew13kki+eqh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +48,9 @@ INSTALLED_APPS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = (
+    'token',
+)
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000)
@@ -55,7 +58,7 @@ JWT_AUTH = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['common.auth.SyslongAuth'],
-    'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
+    # 'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
     'PAGE_SIZE': 10,  # 每页显示多少个
     'EXCEPTION_HANDLER': 'common.exception_handler.exception_handler',
@@ -190,7 +193,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL = 'users.UserProfile'
 
 # 关闭末尾为/的错误
-APPEND_SLASH=False
+APPEND_SLASH = False
 
 # 配置简单日志项
 logging.basicConfig(level=logging.DEBUG,

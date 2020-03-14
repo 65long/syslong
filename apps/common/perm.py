@@ -1,6 +1,6 @@
 import re
 from rest_framework.permissions import BasePermission
-from users.models import WebRes
+from users.models import WebResource
 
 
 class UserPermission(BasePermission):
@@ -19,7 +19,7 @@ class UserPermission(BasePermission):
         method = request.method.lower()
         path = re.sub(r'(/\d+/)', '/id/', request.path)
         try:
-            web = WebRes.objects.filter(method=method, path=path).first()
+            web = WebResource.objects.filter(method=method, path=path).first()
             perms_list = request.user.role.resource.values_list('id', flat=True)
             if web and web.id in perms_list:
                 return True

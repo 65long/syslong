@@ -13,10 +13,11 @@ Vue.config.productionTip = false
 Vue.use(ElementUI);
 
 // 设置axios默认配置
-Axios.defaults.baseURL='http://118.31.12.178/api/';
+Axios.defaults.baseURL='http://118.31.12.178:8000/api/';
 // 添加全局拦截器
 Axios.interceptors.request.use(config => {
     config.headers.token=window.sessionStorage.getItem('token');
+    console.log('token' + window.sessionStorage.getItem('token'))
     Loading.service({text:"拼命加载中..."});
     return config
 });
@@ -32,7 +33,7 @@ Axios.interceptors.response.use(res=> {
     return res;
   }, err=> {
     Loading.service().close();
-    // console.log(err.response);
+    console.log(err);
     var msg = err.response.data.message;
     if (err.response.status == 500||err.response.status == 404) {
         Message.error({message: '服务器被吃了⊙﹏⊙∥:' + msg});

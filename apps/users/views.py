@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from .models import WebRes, UserProfile, Role
+from .models import WebResource, UserProfile, Role
 from .serializer import UserSerializer, RoleSerializer
 from .filter import UserFilter
 import logging
@@ -48,7 +48,7 @@ class MenuView(APIView):
         '获取系统的菜单列表用于前端展示'
         if request.user.is_superuser:
             # 系统最高权限管理猿菜单不受分配影响，直接查数据库
-            webres = WebRes.objects.filter(is_menu=True).all()
+            webres = WebResource.objects.filter(is_menu=True).all()
         else:
             webres = request.user.role.resource.filter(is_menu=True).all()
         # logging.info('webres-------{}'.format(webres))
@@ -111,7 +111,7 @@ class PermsView(APIView):
         role_id = request.data.get('role_id', -1)
         perm_id = request.data.get('perm_id', [])
         role = Role.objects.filter(id=role_id).first()
-        perms = WebRes.objects.filter(id__in=perm_id).all()
+        perms = WebResource.objects.filter(id__in=perm_id).all()
         # 为角色重新赋权限
         if role and perms:
             role.resource.clear()
@@ -130,12 +130,12 @@ class PermsView(APIView):
         role_id = request.data.get('role_id', -1)
         perm_id = request.data.get('perm_id', -1)
         role = Role.objects.filter(id=role_id).first()
-        perms = WebRes.objects.filter(Q(id=perm_id) | Q(pid=perm_id)).all()
+        perms = WebResource.objects.filter(Q(id=perm_id) | Q(pid=perm_id)).all()
         perms_lst.extend(perms)
         # 添加一级权限寻找三级权限
-        temp_perms = WebRes.objects.filter(pid=perm_id).all()
+        temp_perms = WebResource.objects.filter(pid=perm_id).all()
         for temp_perm in temp_perms:
-            web3 = WebRes.objects.filter(pid=temp_perm.id).all()
+            web3 = WebResource.objects.filter(pid=temp_perm.id).all()
             perms_lst.extend(web3)
         if role and perms_lst:
             role.resource.remove(*perms_lst)
@@ -196,7 +196,7 @@ class PermsView(APIView):
 
     def get_perms_all(self):
         temp_dic = {}
-        web_lst = WebRes.objects.all()
+        web_lst = WebResource.objects.all()
         for web in web_lst:
             if web.pid is None:  # 一级权限
                 if web.id not in temp_dic:
