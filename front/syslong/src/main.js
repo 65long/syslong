@@ -7,6 +7,7 @@ import ElementUI from 'element-ui'
 import {Message,Loading} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import Axios from 'axios'
+import store from './store/index'
 
 Vue.config.productionTip = false
 
@@ -62,6 +63,7 @@ import './assets/css/global.css'
 new Vue({
   el: '#app',
   router,
+  store,
   components: { App },
   template: '<App/>'
 })

@@ -20,7 +20,7 @@
                 <div @click="fold_aside" class="fold-button">||||</div>
                 <!--router属性开启路由模式，跳向index属性绑定的值-->
                 <!--unique-opened 保持只有一个子菜单开启-->
-                <el-menu background-color="#373D41" text-color="#fff" router unique-opened
+                <el-menu background-color="#373D41" text-color="#fff" unique-opened router
                          :collapse="aside_closed" :collapse-transition="false" active-text-color="#409EFF"
                          :default-active="active_path"
                 >
@@ -29,7 +29,8 @@
                             <span>{{menu1.name}}</span>
                         </template>
                         <el-menu-item :index="menu2.path" v-for="menu2 in menu1.children"
-                                      :key="menu2.path" @click="saveActivePath(menu2.path)">
+                                      :key="menu2.path" @click="saveActivePath(menu2.path)"
+                        >
                             <template>
                                 <span>{{menu2.name}}</span>
                             </template>

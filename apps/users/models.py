@@ -81,11 +81,14 @@ class RoleResourceAssign(models.Model):
     permission = models.BooleanField(verbose_name='允许访问', default=True)
     # 放在此处是针对某个模块是仅允许本人还是本部门，如果放在角色处是针对某个角色进行授权
     # mode = models.PositiveSmallIntegerField(verbose_name='数据授权模式', choices=mode_choice)
-    method = models.CharField(verbose_name='操作行为/执行方法(针对api)', choices=method_choice, max_length=50)
+    method = models.CharField(verbose_name='操作行为/执行方法(针对api)', choices=method_choice, max_length=50, null=True, blank=True)
 
     class Meta:
-        verbose_name = "用户信息表"
+        verbose_name = "角色权限表"
         verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return '角色%s --权限%s'%(self.role, self.webres)
 
 
 class UserProfile(AbstractUser):

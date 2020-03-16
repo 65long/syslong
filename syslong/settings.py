@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_HEADERS = (
     'token',
+    'content-type',
 )
 
 JWT_AUTH = {
