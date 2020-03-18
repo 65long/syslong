@@ -50,12 +50,12 @@ class WebResource(models.Model):
 
 class Role(models.Model):
     '角色/职位'
-    mode_choice = ((1, '系统所有'), (2, '本机构及下属机构'), (3, '本机构'),
-                   (4, '本部门及下属部门'), (5, '本部门'), (6, '仅本人'))
+    mode_choice = ((1, '系统所有'), (2, '本机构及下属'), (3, '仅本机构'),
+                   (4, '本部门及下属'), (5, '仅本部门'), (6, '仅本人'))
     name = models.CharField(verbose_name='角色名称', max_length=20, unique=True)
     resource = models.ManyToManyField(verbose_name='角色的用户', to='WebResource', through='RoleResourceAssign',
                                      through_fields=('role', 'webres'))
-    mode = models.PositiveSmallIntegerField(verbose_name='数据授权模式', choices=mode_choice)
+    mode = models.PositiveSmallIntegerField(verbose_name='数据授权模式', choices=mode_choice, default=6)
     desc = models.CharField(verbose_name='描述', max_length=20, null=True, blank=True)
     dept = models.ForeignKey(verbose_name='所属部门', to='Organization', related_name='role_dept', null=True)
     org = models.ForeignKey(verbose_name='所属组织', to='Organization', related_name='role_org', null=True)

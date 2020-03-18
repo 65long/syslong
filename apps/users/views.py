@@ -12,7 +12,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from .models import WebResource, UserProfile, Role
+from .models import WebResource, UserProfile, Role, RoleResourceAssign, Organization
 from .serializer import UserSerializer, RoleSerializer
 from .filter import UserFilter
 import logging
@@ -20,6 +20,8 @@ import logging
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 # Create your views here.
+
+ROLE_MODE_DICT = dict(Role.mode_choice)
 
 
 class LoginView(APIView):
@@ -115,7 +117,9 @@ class PermsView(APIView):
         # 为角色重新赋权限
         if role and perms:
             role.resource.clear()
-            role.resource.add(*perms)
+            for perm in perms:
+                RoleResourceAssign.objects.create(role=role, webres=perm)
+
             res_lst = self.get_perms(role)
         # 删除角色的所有权限
         elif role and not perms:
@@ -130,15 +134,10 @@ class PermsView(APIView):
         role_id = request.data.get('role_id', -1)
         perm_id = request.data.get('perm_id', -1)
         role = Role.objects.filter(id=role_id).first()
-        perms = WebResource.objects.filter(Q(id=perm_id) | Q(pid=perm_id)).all()
-        perms_lst.extend(perms)
-        # 添加一级权限寻找三级权限
-        temp_perms = WebResource.objects.filter(pid=perm_id).all()
-        for temp_perm in temp_perms:
-            web3 = WebResource.objects.filter(pid=temp_perm.id).all()
-            perms_lst.extend(web3)
-        if role and perms_lst:
-            role.resource.remove(*perms_lst)
+        perms = WebResource.objects.filter(Q(id=perm_id) | Q(pid=perm_id)).values_list('id', flat=True)
+        perms = WebResource.objects.filter(Q(id__in=perms) | Q(pid__in=perms)).values_list('id', flat=True)
+        if role and perms:
+            RoleResourceAssign.objects.filter(role=role, webres__in=perms).delete()
             res_lst = self.get_perms(role)
         return Response(res_lst)
 
@@ -268,7 +267,7 @@ class RoleToUsersView(APIView):
         res_lst = []
         role_lst = Role.objects.all()
         for role in role_lst:
-            res_lst.append(dict(id=role.id, name=role.name))
+            res_lst.append(dict(id=role.id, name=role.name, mode=role.mode))
         return Response(res_lst)
 
 
@@ -276,7 +275,70 @@ class RoleView(ModelViewSet):
     '角色的权限的增删改查'
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    # filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
-    # filter_class = UserFilter
-    # ordering_fields = ('id',)
-    # ordering = ('-id',)
+
+
+class DataPermsToRole(APIView):
+    "更改角色数据权限"
+    def get(self, request, *args, **kwargs):
+        cur_mode = 0
+        try:
+            cur_role = request.query_params .get('role_id', -1)
+            role = Role.objects.filter(id=cur_role).first()
+            cur_mode = str(role.mode) if hasattr(role, 'mode') else '0'
+        except Exception as e:
+            logging.info('获取角色数据权限异常 -%s' %e)
+        org_dept_lst = self.get_org_dept()
+        return Response(dict(all_dataperms=ROLE_MODE_DICT, cur_mode=cur_mode, org_dept_lst=org_dept_lst))
+
+    def post(self, request, *args, **kwargs):
+        org, dept, res_mode = (None, None, None)
+        role_id = request.data.get('role_id', -1)
+        mode = int(request.data.get('mode', -1))
+        role = Role.objects.filter(id=role_id).first()
+        try:
+            if role and mode in ROLE_MODE_DICT:
+                role.mode = mode
+                org_type_lst = request.data.get('org_dept', "")
+                # logging.info('-1---org_type_lst----%s' %1)
+                args_len = len(org_type_lst)
+                if args_len == 2:
+                    role.org_id, role.dept_id = org_type_lst
+                elif args_len == 1:
+                    # 仅属于某个组织 清空所在部门
+                    role.org_id = org_type_lst[0]
+                    role.dept_id = None
+                role.save()
+                org, dept = getattr(role.org, 'name', None), getattr(role.dept, 'name', None)
+                res_mode = ROLE_MODE_DICT.get(mode)
+        except:
+            import traceback
+            traceback.print_exc()
+        return Response(dict(mode=res_mode, org=org, dept=dept))
+
+    def get_org_dept(self):
+        orgs = Organization.objects.all()
+        res_dict = {}
+        for org in orgs:
+            cur_org = dict(id=org.id, name=self.name_filter(org.name))
+            # org
+            if org.node_type  == 1:
+                if org.id not in res_dict:
+                    res_dict[org.id] = dict(**cur_org, children=[])
+                else:
+                    res_dict[org.id]['id'] = org.id
+                    res_dict[org.id]['name'] = org.name
+            # dept
+            elif org.node_type == 2:
+                if org.parent_node.id not in res_dict:
+                    res_dict[org.parent_node.id] = dict(children=[cur_org])
+                else:
+                    res_dict[org.parent_node.id]['children'].append(cur_org)
+            else:
+                pass
+
+        return res_dict.values()
+
+    def name_filter(self, name=''):
+        if len(name) > 12 and isinstance(name, str):
+            name = name[:2] + '...' + name[-2:]
+        return name

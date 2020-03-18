@@ -4,6 +4,7 @@ __date__ = '2020/1/8 22:07'
 
 
 import traceback
+import logging
 from django.core.exceptions import PermissionDenied
 from rest_framework import status
 from rest_framework.response import Response
@@ -72,10 +73,11 @@ def exception_handler(exc, content):
             # if settings.RUN_MODE != 'PRODUCT':
             #     raise exc
             # 正式环境，屏蔽500
+
         data.update({
                 'code': status.HTTP_200_OK,
                 'message': exc.detail,
             })
-
+        logging.info('---error--------%s' % exc)
         # set_rollback()
     return Response(data, status=status.HTTP_200_OK)

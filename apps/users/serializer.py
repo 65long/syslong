@@ -1,5 +1,6 @@
 # encoding: utf-8
 
+import logging
 from rest_framework import serializers
 from .models import UserProfile, Role
 
@@ -31,19 +32,24 @@ class UserSerializer(serializers.ModelSerializer):
 
 class RoleSerializer(serializers.ModelSerializer):
     perms = serializers.SerializerMethodField()
+    cur_mode = serializers.CharField(source='get_mode_display', read_only=True)
+    org = serializers.CharField(read_only=True)
+    dept = serializers.CharField(read_only=True)
 
     class Meta:
         model = Role
-        fields = ['id', 'name', 'desc', 'perms']
+        fields = ['id', 'name', 'desc', 'cur_mode', 'org', 'dept', 'perms']
         extra_kwargs = {
             # 'password': {'write_only': True},
             # 'id': {'read_only': True},
-            # 'is_superuser': {'read_only': True},
+            'cur_mode': {'read_only': True},
             }
+        depth = 1
 
     def get_perms(self, role_obj):
         temp_dic = {}
         web_lst = role_obj.resource.all()
+        # logging.info('web_list------{}'.format(web_lst))
         for web in web_lst:
             if web.pid is None:  # 一级权限
                 if web.id not in temp_dic:

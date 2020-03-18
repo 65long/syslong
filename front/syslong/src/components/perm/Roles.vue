@@ -3,14 +3,14 @@
     <!--面包屑导航区与-->
     <el-breadcrumb separator="/">
       <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item><a href="/roles">角色管理</a></el-breadcrumb-item>
-      <el-breadcrumb-item>角色列表</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/roles">职位管理</a></el-breadcrumb-item>
+      <el-breadcrumb-item>职位列表</el-breadcrumb-item>
     </el-breadcrumb>
     <!--看卡片试图-->
     <el-card>
-      <!--添加角色按钮-->
+      <!--添加职位按钮-->
       <el-row>
-        <el-col><el-button type="primary" @click="showAddRoleDialog">添加角色</el-button></el-col>
+        <el-col><el-button type="primary" @click="showAddRoleDialog">添加职位</el-button></el-col>
       </el-row>
       <el-table :data="roleList" border stripe>
         <!--展开列-->
@@ -46,16 +46,23 @@
         </el-table-column>
         <!--索引列-->
         <el-table-column type="index"></el-table-column>
-        <el-table-column prop="name" label="角色名称" width="100"></el-table-column>
-        <el-table-column prop="desc" label="角色描述" ></el-table-column>
-        <el-table-column label="角色操作" width="200">
+        <el-table-column prop="name" label="职位名称" width="100"></el-table-column>
+        <el-table-column prop="org" label="公司" width="100"></el-table-column>
+        <el-table-column prop="dept" label="部门" width="100"></el-table-column>
+        <el-table-column prop="cur_mode" label="数据权限" width="100"></el-table-column>
+        <el-table-column prop="desc" label="职位描述" ></el-table-column>
+        <el-table-column label="职位操作" width="240">
             <template slot-scope="scope">
               <!--修改，删除，分配权限-->
               <el-button type="primary" circle size="mini" @click="showEditRoleDialog(scope.row)">编辑</el-button>
               <el-button type="danger" circle size="mini" @click="deleteRole(scope.row)">删除</el-button>
               <!--分配权限，el-tooltip为文本提示按钮-->
-              <el-tooltip class="item" effect="dark" content="分配权限" placement="top" :enterable="false">
-                <el-button type="primary"  circle size="mini" @click="showAddPermsDialog(scope.row)">分配权限</el-button>
+              <el-tooltip class="item" effect="dark" content="分配系统功能" placement="top" :enterable="false">
+                <el-button type="primary"  circle size="mini" @click="showAddPermsDialog(scope.row)">功能</el-button>
+              </el-tooltip>
+              <!--分配权限，el-tooltip为文本提示按钮-->
+              <el-tooltip class="item" effect="dark" content="分配系统数据" placement="top" :enterable="false">
+                <el-button type="primary"  circle size="mini" @click="showChangeDataPermsDialog(scope.row)">数据</el-button>
               </el-tooltip>
             </template>
         </el-table-column>
@@ -89,21 +96,21 @@
         </span>
       </el-dialog>
 
-      <!--修改角色对话框-->
+      <!--修改职位对话框-->
       <el-dialog
-        title="修改角色详情"
+        title="修改职位详情"
         :visible.sync="editDialogVisible"
         @close="editDialogClose"
         width="50%">
         <!--这是修改主题区-->
         <el-form ref='editRoleForm' :model='editRoleForm' :rules="editRoleRules" label-width='70px'>
-            <el-form-item prop="name" label="角色名称">
-                <el-input v-model='editRoleForm.name' placeholder='角色名称'>
+            <el-form-item prop="name" label="职位名称">
+                <el-input v-model='editRoleForm.name' placeholder='职位名称'>
                 </el-input>
             </el-form-item>
 
-            <el-form-item prop="desc" label="角色描述">
-                <el-input v-model='editRoleForm.desc' placeholder='角色描述'></el-input>
+            <el-form-item prop="desc" label="职位描述">
+                <el-input v-model='editRoleForm.desc' placeholder='职位描述'></el-input>
             </el-form-item>
 
         </el-form>
@@ -114,21 +121,21 @@
         </span>
       </el-dialog>
 
-      <!--添加角色对话框-->
+      <!--添加职位对话框-->
       <el-dialog
-        title="添加角色"
+        title="添加职位"
         :visible.sync="addDialogVisible"
         @close="addDialogClose"
         width="50%">
         <!--这是添加主题区-->
         <el-form ref='addRoleForm' :model='addRoleForm' :rules="addRoleRules" label-width='70px'>
-            <el-form-item prop="name" label="角色名称">
-                <el-input v-model='addRoleForm.name' placeholder='请输入角色名称'>
+            <el-form-item prop="name" label="职位名称">
+                <el-input v-model='addRoleForm.name' placeholder='请输入职位名称'>
                 </el-input>
             </el-form-item>
 
-            <el-form-item prop="desc" label="角色描述">
-                <el-input v-model='addRoleForm.desc' placeholder='请输入角色描述'></el-input>
+            <el-form-item prop="desc" label="职位描述">
+                <el-input v-model='addRoleForm.desc' placeholder='请输入职位描述'></el-input>
             </el-form-item>
 
         </el-form>
@@ -136,6 +143,45 @@
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
           <el-button type="primary" @click="submitRoleAdd">确 定</el-button>
+        </span>
+      </el-dialog>
+
+      <!--更改职位数据权限对话框-->
+      <el-dialog
+        title="更改数据权限"
+        :visible.sync="changeDataPermsDialog"
+        width="50%">
+        <!--公司部门选择器-->
+          <el-cascader
+            v-model="orgDeptSelect"
+            :options="orgDeptList"
+            :props="cascaderSettings"
+            placeholder="请选择组织机构"
+            filterable
+            clearable
+          >
+            <template slot-scope="{ node, data }">
+              <span>{{ data.name }}</span>
+              <!--显示子元素个数-->
+              <span v-if="!node.isLeaf"> ({{ data.children.length }}) </span>
+            </template>
+          </el-cascader>
+          <div style="height: 10px"></div>
+        <!--数据模式选择器-->
+         <el-select v-model="dataModeSelect" placeholder="请选择授权模式" filterable clearable>
+            <el-option
+              v-for="(value, key) in dataMode"
+              :key="key"
+              :label="value"
+              :value="key"
+              :disabled="key==curMode"
+              >
+            </el-option>
+         </el-select>
+        <!--底部按钮区域-->
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="changeDataPermsDialog = false">取 消</el-button>
+          <el-button type="primary" @click="submitChangeDataPermMode">确 定</el-button>
         </span>
       </el-dialog>
 
@@ -148,8 +194,23 @@
         name: "Roles",
       data(){
           return {
+            //选中的组织机构
+            orgDeptSelect:'',
+            // 级联选择器配置
+            cascaderSettings: { expandTrigger: 'hover',
+              // 单选任意一级
+              checkStrictly:true,
+              value: 'id', label: 'name', children:'children' },
+            // 组织机构部门列表
+            orgDeptList: [],
+            // 当前的数据权限模式
+            curMode: "",
+            // 数据权限模式1：所有数据。。。
+            dataMode: {},
+            // 选择的数据权限模式
+            dataModeSelect: "",
             roleTotal: 0,
-            //查询角色列表分页
+            //查询职位列表分页
             queryInfo: {
               page: 1,
               size: 5,
@@ -158,6 +219,8 @@
             allPermsList: [],
             // 显示分配权限对话框
             addPermsDialogVisible: false,
+            // 显示更改数据权限对话框
+            changeDataPermsDialog: false,
             // 树形控件的属性绑定对象，指定展示那些，指定嵌套关系字段
             treeProps: {
               label: 'name',
@@ -165,30 +228,80 @@
             },
             //默认选中的节点id值
             defkeys: [],
-            // 被操作的角色id
+            // 被操作的职位id
             operRoleId: -1,
-            //控制显示编辑角色对话框的显示
+            //控制显示编辑职位对话框的显示
             editDialogVisible: false,
             // 修改对话框的提交数据
             editRoleForm: {},
             editRoleRules: {
               name: [
-                {required: true, message: '请输入角色名称', trigger: 'blur'},
+                {required: true, message: '请输入职位名称', trigger: 'blur'},
                 {min: 2, max: 8, message: '用户名长度在2-15个字符之间', trigger: 'blur'},
               ],
             },
             addRoleForm: {},
             addRoleRules:{
               name: [
-                {required: true, message: '请输入角色名称', trigger: 'blur'},
+                {required: true, message: '请输入职位名称', trigger: 'blur'},
                 {min: 2, max: 8, message: '用户名长度在2-15个字符之间', trigger: 'blur'},
               ],
             },
-            //控制显示添加角色对话框显示
+            //控制显示添加职位对话框显示
             addDialogVisible: false,
           }
       },
       methods: {
+        submitChangeDataPermMode(){
+          console.log('---'+ this.orgDeptSelect);
+          if (this.dataModeSelect){
+            this.$axios.post('/rbac/data-to-role/', {role_id: this.operRoleId, mode: this.dataModeSelect,
+              org_dept: this.orgDeptSelect})
+              .then(res => {
+                this.roleList.forEach(role => {
+                  if (role.id==this.operRoleId){
+                    //更改当前职位的数据权限
+                    role.cur_mode = res.data.mode;
+                    role.dept = res.data.dept;
+                    role.org = res.data.org;
+                    this.curMode = this.dataModeSelect;
+                    this.closeChangeDataPermsDialog();
+                    this.$message.success(`更改成功`)
+                  }
+                })
+              })
+              .catch(err => {
+                this.$message.success('更改失败')
+              });
+
+          }else{
+            this.$message.warning('请选择要更改的数据权限模式')
+          }
+        },
+        getDataPermsMode(){
+          this.$axios.get(`/rbac/data-to-role/?role_id=${this.operRoleId}`)
+            .then(res => {
+              this.dataMode = res.data.all_dataperms;
+              this.curMode = res.data.cur_mode;
+              this.orgDeptList = res.data.org_dept_lst;
+            })
+            .catch(err => {
+              this.$message.success('获取失败')
+            })
+        },
+        showChangeDataPermsDialog(role){
+          this.operRoleId = role.id;
+          this.getDataPermsMode();
+          this.changeDataPermsDialog = !this.changeDataPermsDialog
+        },
+        closeChangeDataPermsDialog(){
+          // 关闭数据权限对话框同时制空响应的数据
+          this.operRoleId = -1;
+          this.dataModeSelect = '';
+          this.orgDeptSelect='';
+          this.changeDataPermsDialog = false;
+        },
+
         showAddRoleDialog(){
           this.addDialogVisible = !this.addDialogVisible;
         },
@@ -201,15 +314,15 @@
                 return
               }else{
                 //与验证合法
-                // 提交角色编辑的数据
+                // 提交职位编辑的数据
                 this.$axios.post(`/rbac/roles/`, this.addRoleForm)
                   .then(res => {
                     this.getRoleList();
                     this.showAddRoleDialog();
-                    this.$message.success('添加角色成功');
+                    this.$message.success('添加职位成功');
                   })
                   .catch(err => {
-                    this.$message.error('添加角色失败')
+                    this.$message.error('添加职位失败')
                   })
               }
             })
@@ -219,8 +332,8 @@
           this.$refs.editRoleForm.resetFields();
         },
         deleteRole(role){
-          //删除角色
-          this.$confirm(`确定删除【${role.name}】这个角色吗？`, '删除角色',
+          //删除职位
+          this.$confirm(`确定删除【${role.name}】这个职位吗？`, '删除职位',
             {confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'})
             .then(() => {
               this.$axios.delete(`/rbac/roles/${role.id}/`)
@@ -229,7 +342,7 @@
                   this.getRoleList();
                 })
                 .catch(err => {
-                  this.$message.error(`删除角色失败---${role.name}`)
+                  this.$message.error(`删除职位失败---${role.name}`)
                 })
             })
             .catch(err => {
@@ -237,7 +350,7 @@
             });
         },
         editDialogClose(){
-          //修改角色对话框关闭之后做的动作，重置表单的验证效果
+          //修改职位对话框关闭之后做的动作，重置表单的验证效果
           // 重置提交数据表单
           this.editRoleForm.clear();
           this.$refs.editRoleForm.resetFields();
@@ -251,7 +364,7 @@
                 return
               }else{
                 //与验证合法
-                // 提交角色编辑的数据
+                // 提交职位编辑的数据
                 this.$axios.put(`/rbac/roles/${this.operRoleId}/`, this.editRoleForm)
                   .then(res => {
                     // console.log(res.data);
@@ -263,21 +376,21 @@
                       }
                     });
                     this.closeEditRoleDialog();
-                    this.$message.success('修改角色信息成功');
+                    this.$message.success('修改职位信息成功');
                   })
                   .catch(err => {
-                    this.$message.error('更改角色信息失败')
+                    this.$message.error('更改职位信息失败')
                   })
               }
             })
         },
         showEditRoleDialog(role){
-          // 打开角色编辑对话狂
+          // 打开职位编辑对话狂
           this.operRoleId = role.id;
           this.editDialogVisible = true;
         },
         closeEditRoleDialog(){
-          // 关闭角色编辑对话狂
+          // 关闭职位编辑对话狂
           this.editDialogVisible = false;
         },
         handleSizeChange(newSize){
@@ -292,14 +405,14 @@
           this.getRoleList();
         },
         getRoleList(){
-          // 获取角色列表数据
+          // 获取职位列表数据
             this.$axios.get('/rbac/roles/', {params: this.queryInfo})
               .then(res => {
                 this.roleList = res.data.data;
                 this.roleTotal = res.data.total;
               })
               .catch(err => {
-                this.$message.error('获取角色列表错误')
+                this.$message.error('获取职位列表错误')
               })
           },
         getPermListToRole(role){
@@ -316,7 +429,7 @@
             })
         },
         removeRolePermById(perm_id, role, name){
-          confirmRes = this.$confirm(`删除该角色的【${name}】权限？`, '删除权限',
+          confirmRes = this.$confirm(`删除该职位的【${name}】权限？`, '删除权限',
             {confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'})
             .then(() => {
               var param = {perm_id, role_id: role.id}
@@ -342,7 +455,7 @@
           this.defkeys = []
         },
         assignPerms(){
-          //为角色分配权限
+          //为职位分配权限
           const keys = [
             ...this.$refs.treeRef.getCheckedKeys(),
             ...this.$refs.treeRef.getHalfCheckedKeys()

@@ -22,6 +22,7 @@ from .views import PermsView
 from .views import RoleView
 from .views import PermsListView
 from .views import RoleToUsersView
+from .views import DataPermsToRole
 
 router = DefaultRouter()
 router.register('users', UsersView, basename='users_oper')
@@ -32,6 +33,7 @@ urlpatterns = [
     url(r'^perms/$', PermsView.as_view()),
     url(r'^permslist/$', PermsListView.as_view()),
     url(r'^role-to-user/$', RoleToUsersView.as_view()),
+    url(r'^data-to-role/', DataPermsToRole.as_view()),
     # url(r'^users', UsersView.as_view({'get': 'list'})),
     url('', include(router.urls))
 ]
