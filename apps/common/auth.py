@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-from django.core.cache import cache
+from django.core.cache import caches
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 import jwt
@@ -20,7 +20,7 @@ class SyslongAuth(BaseAuthentication):
             # payload = jwt.decode(token, salt, True)
             user_dict = jwt_decode_handler(token)
             username = user_dict.get('username', '')
-            user = cache.get(token)
+            user = caches["redis-token"].get(token)
             if not user:
                 raise AuthenticationFailed('认证过期')
         except AuthenticationFailed:

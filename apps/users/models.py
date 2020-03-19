@@ -11,8 +11,8 @@ from django.contrib.auth.models import AbstractUser
 class Organization(models.Model):
     node_type_choice = ((1, '机构'), (2, '部门'))
     name = models.CharField(verbose_name='组织/部门名称', max_length=20)
-    code_name = models.CharField(verbose_name='公司域名', max_length=20, unique=True, null=True)
-    code_link = models.CharField(verbose_name='组织链接', max_length=200)
+    code_name = models.CharField(verbose_name='公司域名', max_length=20, unique=True, null=True, blank=True)
+    code_link = models.CharField(verbose_name='快查链接', max_length=2000)
     parent_node = models.ForeignKey(verbose_name='父节点', to='self', related_name='parent', null=True, blank=True)
     node_type = models.PositiveSmallIntegerField(verbose_name='节点类型', choices=node_type_choice)
     alias = models.CharField(verbose_name='别名', max_length=20, null=True, blank=True)
@@ -33,6 +33,7 @@ class WebResource(models.Model):
     level_choice = ((1, '模块'), (2, '子模块'), (3, 'api接口'))
     name = models.CharField(verbose_name='权限名称', max_length=20, unique=True, null=True, blank=True)
     path = models.CharField(verbose_name='访问url', max_length=200, null=True, blank=True)
+    code_link = models.CharField(verbose_name='快查链接', max_length=2000, null=True, blank=True)
     is_menu = models.BooleanField(verbose_name='是否为菜单', default=False)
     level = models.PositiveSmallIntegerField(verbose_name='菜单级别', choices=level_choice)
     sort = models.IntegerField(verbose_name='排序', null=True, blank=True, default=100)

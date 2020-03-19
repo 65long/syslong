@@ -2,7 +2,7 @@
 import datetime
 
 from django.shortcuts import render
-from django.core.cache import cache
+from django.core.cache import caches
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate as auth
@@ -37,7 +37,7 @@ class LoginView(APIView):
             token = jwt_encode_handler(payload)
             data = dict(token=token, username=user.username, status=200)
             seconds = settings.JWT_AUTH.get('JWT_EXPIRATION_DELTA', datetime.timedelta(minutes=0)).total_seconds()
-            cache.set(token, user, seconds)
+            caches["redis-token"].set(token, user, seconds)
             return Response(data, 200)
         data = dict(message='用户名或密码错误', status=401)
         return Response(data, 401)
@@ -321,7 +321,7 @@ class DataPermsToRole(APIView):
         for org in orgs:
             cur_org = dict(id=org.id, name=self.name_filter(org.name))
             # org
-            if org.node_type  == 1:
+            if org.node_type == 1:
                 if org.id not in res_dict:
                     res_dict[org.id] = dict(**cur_org, children=[])
                 else:
