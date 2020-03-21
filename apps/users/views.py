@@ -44,6 +44,14 @@ class LoginView(APIView):
 
 
 class MenuView(APIView):
+    """  // 返回值为[{示例如下}, {}]
+  // path: '/research',
+  // component: Layout,
+  // redirect: '/research/respage01',
+  // name: 'Research',
+  // alwaysShow: true,
+  // meta: { title: '刘福龙', icon: 'wechat' },
+  // children: []  """
     permission_classes = []
 
     def get(self, request, *args, **kwargs):
@@ -53,25 +61,32 @@ class MenuView(APIView):
             webres = WebResource.objects.filter(is_menu=True).all()
         else:
             webres = request.user.role.resource.filter(is_menu=True).all()
-        # logging.info('webres-------{}'.format(webres))
         res = []
         temp_dic = {}
-        for web in webres:
-                # logging.info('web pid----%s' %web.pid)
-                if web.pid is None:
-                    if web.id not in temp_dic:
-                        temp_dic[web.id] = {'name': web.name, 'path': web.path, 'children': []}
+        try:
+            for web in webres:
+                    # logging.info('web pid----%s' %web.pid)
+                    if web.pid is None:
+                        rank1router = {'name': web.name, 'path': web.path, 'component': 'Layout',
+                                       'redirect': "noredirect", 'alwaysShow': True,
+                                       'meta': {'title': web.name, 'icon': web.icon}}
+                        if web.id not in temp_dic:
+                            rank1router.update({'children': []})
+                            temp_dic[web.id] = rank1router
+                        else:
+                            temp_dic[web.id].update(rank1router)
                     else:
-                        temp_dic[web.id]['name'] = web.name
-                        temp_dic[web.id]['path'] = web.path
-                else:
-                    child = {'name': web.name, 'path': web.path}
-                    if web.pid.id not in temp_dic:
-                        temp_dic[web.pid.id] = {'children': [child]}
-                    else:
-                        temp_dic[web.pid.id]['children'].append(child)
-
-        return Response({'menu': temp_dic.values()})
+                        rank2router = {'name': web.name, 'path': web.path, 'component': web.component,
+                                       'alwaysShow': True, 'meta': {'title': web.name, 'icon': web.icon}}
+                        if web.pid.id not in temp_dic:
+                            temp_dic[web.pid.id] = {'children': [rank2router]}
+                        else:
+                            temp_dic[web.pid.id]['children'].append(rank2router)
+        except Exception:
+            logging.info('temp-dict----{}'.format(temp_dic))
+            import traceback
+            traceback.print_exc()
+        return Response({'menu_list': temp_dic.values()})
 
 
 class PermsListView(APIView):
