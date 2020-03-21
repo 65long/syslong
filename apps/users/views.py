@@ -77,7 +77,8 @@ class MenuView(APIView):
                             temp_dic[web.id].update(rank1router)
                     else:
                         rank2router = {'name': web.name, 'path': web.path, 'component': web.component,
-                                       'alwaysShow': True, 'meta': {'title': web.name, 'icon': web.icon}}
+                                       'alwaysShow': False,
+                                       'meta': {'title': web.name, 'icon': web.icon}}
                         if web.pid.id not in temp_dic:
                             temp_dic[web.pid.id] = {'children': [rank2router]}
                         else:
