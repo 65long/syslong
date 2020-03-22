@@ -35,7 +35,8 @@ class LoginView(APIView):
         if user:
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
-            data = dict(token=token, username=user.username, status=200)
+            role = user.role.name if hasattr(user.role, 'name') else '未分配角色'
+            data = dict(token=token, username=user.username, role=role, status=200)
             seconds = settings.JWT_AUTH.get('JWT_EXPIRATION_DELTA', datetime.timedelta(minutes=0)).total_seconds()
             caches["redis-token"].set(token, user, seconds)
             return Response(data, 200)
@@ -67,7 +68,7 @@ class MenuView(APIView):
             for web in webres:
                     # logging.info('web pid----%s' %web.pid)
                     if web.pid is None:
-                        rank1router = {'name': web.name, 'path': web.path, 'component': 'Layout',
+                        rank1router = {'name': web.component_name, 'path': web.path, 'component': 'Layout',
                                        'redirect': "noredirect", 'alwaysShow': True,
                                        'meta': {'title': web.name, 'icon': web.icon}}
                         if web.id not in temp_dic:
@@ -76,7 +77,7 @@ class MenuView(APIView):
                         else:
                             temp_dic[web.id].update(rank1router)
                     else:
-                        rank2router = {'name': web.name, 'path': web.path, 'component': web.component,
+                        rank2router = {'name': web.component_name, 'path': web.path, 'component': web.component,
                                        'alwaysShow': False,
                                        'meta': {'title': web.name, 'icon': web.icon}}
                         if web.pid.id not in temp_dic:

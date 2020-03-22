@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     login(){
-     this.$axios.post('/rbac/login', this.loginForm)
+     this.$axios.post('/rbac/login/', this.loginForm)
        .then(res => {
           this.$message.success('登录成功');
           window.sessionStorage.setItem('token', res.data.token);

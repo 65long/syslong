@@ -31,9 +31,9 @@ const router =  new Router({
       redirect: '/welcome',
       children: [
         {path: '/welcome', component: Welcome},
-        {path: '/users', component: Users},
-        {path: '/perms', component: Perms},
-        {path: '/roles', component: Roles},
+        {path: '/settings/users', component: Users},
+        {path: '/settings/perms', component: Perms},
+        {path: '/settings/roles', component: Roles},
         {path: '/orders', component: Orders},
         {path: '/electronic-equipment', component: Edevices},
       ]

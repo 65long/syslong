@@ -34,6 +34,7 @@ class WebResource(models.Model):
     name = models.CharField(verbose_name='权限名称', max_length=20, unique=True, null=True, blank=True)
     path = models.CharField(verbose_name='访问url', max_length=200, null=True, blank=True)
     component = models.CharField(verbose_name='前端组件', max_length=300, default=r'login/Login')
+    component_name = models.CharField(verbose_name='前端组件名称', max_length=100, default=r'Login')
     icon = models.CharField(verbose_name='前端图标', max_length=100, default='tree-table')
     is_menu = models.BooleanField(verbose_name='是否为菜单', default=False)
     code_link = models.CharField(verbose_name='快查链接', max_length=2000, null=True, blank=True)
