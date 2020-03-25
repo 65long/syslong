@@ -68,7 +68,7 @@ class MenuView(APIView):
             for web in webres:
                     # logging.info('web pid----%s' %web.pid)
                     if web.pid is None:
-                        rank1router = {'name': web.component_name, 'path': web.path, 'component': 'Layout',
+                        rank1router = {'path': web.path, 'component': 'Layout',
                                        'redirect': "noredirect", 'alwaysShow': True,
                                        'meta': {'title': web.name, 'icon': web.icon}}
                         if web.id not in temp_dic:
@@ -98,7 +98,11 @@ class PermsListView(APIView):
     def get(self, request,*args, **kwargs):
         res = []
         try:
-            webres = request.user.role.resource.filter(is_menu=True).all()
+            if request.user.is_superuser:
+                # 超级管理员全部权限
+                webres = WebResource.objects.filter(is_menu=True).all()
+            else:
+                webres = request.user.role.resource.filter(is_menu=True).all()
             for web in webres:
                 if web.pid is None:
                     res.append(dict(name=web.name, path=web.path, level='一级'))

@@ -40,7 +40,8 @@ class WebResource(models.Model):
     code_link = models.CharField(verbose_name='快查链接', max_length=2000, null=True, blank=True)
     level = models.PositiveSmallIntegerField(verbose_name='菜单级别', choices=level_choice)
     sort = models.IntegerField(verbose_name='排序', null=True, blank=True, default=100)
-    pid = models.ForeignKey(verbose_name='父级权限', to='self', null=True, blank=True)
+    # 删除父级菜单，子菜单的pid设置为None(子菜单变为根菜单)
+    pid = models.ForeignKey(verbose_name='父级权限', to='self', null=True, blank=True, on_delete=models.SET_NULL)
     add_time = models.DateTimeField(verbose_name='添加时间', default=datetime.now)
 
     def __str__(self):
@@ -99,9 +100,9 @@ class UserProfile(AbstractUser):
     '扩展用户表'
     nickname = models.CharField(verbose_name='昵称', max_length=200, null=True, blank=True)
     mobile = models.CharField(verbose_name='手机号', max_length=11, null=True, blank=True)
-    role = models.ForeignKey(verbose_name='用户角色', to='Role', related_name='user_role', null=True)
-    dept = models.ForeignKey(verbose_name='用户部门', to='Organization', related_name='user_dept', null=True)
-    org = models.ForeignKey(verbose_name='用户组织', to='Organization', related_name='user_org', null=True)
+    role = models.ForeignKey(verbose_name='用户角色', to='Role', related_name='user_role', null=True, on_delete=models.SET_NULL)
+    dept = models.ForeignKey(verbose_name='用户部门', to='Organization', related_name='user_dept', null=True, on_delete=models.SET_NULL)
+    org = models.ForeignKey(verbose_name='用户组织', to='Organization', related_name='user_org', null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.username
