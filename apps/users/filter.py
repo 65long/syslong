@@ -11,4 +11,4 @@ class UserFilter(FilterSet):
 
     class Meta:
         model = UserProfile
-        fields = '__all__'
+        fields = ['username']

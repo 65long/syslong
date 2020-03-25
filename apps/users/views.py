@@ -35,8 +35,20 @@ class LoginView(APIView):
         if user:
             payload = jwt_payload_handler(user)
             token = jwt_encode_handler(payload)
+
             role = user.role.name if hasattr(user.role, 'name') else '未分配角色'
-            data = dict(token=token, username=user.username, role=role, status=200)
+            head_img = request.build_absolute_uri(user.head_img.url)
+            data = dict(token=token,
+                        username=user.username,
+                        role=role, head_img=head_img,
+                        email=user.email or '就像火箭升空了一样',
+                        mobile=user.mobile or '假如你写了，但是你没有',
+                        nickname=user.nickname or '地表最强',
+                        date_joined=user.date_joined,
+                        last_login=user.last_login,
+                        status=200)
+            user.last_login = datetime.datetime.now()
+            user.save()
             seconds = settings.JWT_AUTH.get('JWT_EXPIRATION_DELTA', datetime.timedelta(minutes=0)).total_seconds()
             caches["redis-token"].set(token, user, seconds)
             return Response(data, 200)
@@ -363,3 +375,34 @@ class DataPermsToRole(APIView):
         if len(name) > 12 and isinstance(name, str):
             name = name[:2] + '...' + name[-2:]
         return name
+
+
+class UpdateUserInfo(APIView):
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        file = request.data.get('file', '')
+        if file:
+            request.user.head_img = file
+            request.user.save()
+        res_url = request.build_absolute_uri(request.user.head_img.url)
+        return Response({'head_img': res_url})
+
+
+class UpateUserPwd(APIView):
+
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        res_dict = dict(code=401, message='修改失败')
+        old_pwd = request.data.get('old_pwd', '')
+        new_pwd = request.data.get('new_pwd', '')
+        logging.info('{}--------{}-------{}'.format(old_pwd, new_pwd, request.user.password))
+        if old_pwd and new_pwd:
+            from django.contrib.auth.hashers import check_password
+            check_res = check_password(old_pwd, request.user.password)
+            if check_res:
+                request.user.set_password(new_pwd)
+                res_dict = dict(code=200, message='修改成功')
+                request.user.save()
+        return Response(res_dict)

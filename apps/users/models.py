@@ -98,8 +98,14 @@ class RoleResourceAssign(models.Model):
 
 class UserProfile(AbstractUser):
     '扩展用户表'
+
+    def gen_image_name(_instance, filename):
+        import uuid
+        return 'user/head/img/{uuid}{filename}'.format(uuid=uuid.uuid4().hex, filename=filename)
+
     nickname = models.CharField(verbose_name='昵称', max_length=200, null=True, blank=True)
     mobile = models.CharField(verbose_name='手机号', max_length=11, null=True, blank=True)
+    head_img = models.ImageField(verbose_name='用户头像', upload_to=gen_image_name, default='default.png')
     role = models.ForeignKey(verbose_name='用户角色', to='Role', related_name='user_role', null=True, on_delete=models.SET_NULL)
     dept = models.ForeignKey(verbose_name='用户部门', to='Organization', related_name='user_dept', null=True, on_delete=models.SET_NULL)
     org = models.ForeignKey(verbose_name='用户组织', to='Organization', related_name='user_org', null=True, on_delete=models.SET_NULL)
