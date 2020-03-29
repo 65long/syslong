@@ -23,6 +23,7 @@ from django.http import HttpResponse
 urlpatterns = [
     url(r'^api/admin/', admin.site.urls),
     url(r'^api/rbac/', include('users.urls')),
-    # 添加静态媒体文件地址
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+    # 添加媒体文件地址
+    # 添加静态文件地址
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) \
+              + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

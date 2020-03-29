@@ -100,8 +100,10 @@ class UserProfile(AbstractUser):
     '扩展用户表'
 
     def gen_image_name(_instance, filename):
-        import uuid
-        return 'user/head/img/{uuid}{filename}'.format(uuid=uuid.uuid4().hex, filename=filename)
+        import hashlib
+        hash = hashlib.sha256(_instance.username[::-1].encode('utf-8'))
+        filename = hash.hexdigest()[::-1] + '.' + filename.split('.')[-1]
+        return 'user/head/img/{}'.format(filename)
 
     nickname = models.CharField(verbose_name='昵称', max_length=200, null=True, blank=True)
     mobile = models.CharField(verbose_name='手机号', max_length=11, null=True, blank=True)
