@@ -16,6 +16,7 @@ from .models import WebResource, UserProfile, Role, RoleResourceAssign, Organiza
 from .serializer import UserSerializer, RoleSerializer
 from .filter import UserFilter
 import logging
+import random
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
@@ -405,4 +406,25 @@ class UpateUserPwd(APIView):
                 request.user.set_password(new_pwd)
                 res_dict = dict(code=200, message='修改成功')
                 request.user.save()
+        return Response(res_dict)
+
+
+class GetSysInfo(APIView):
+
+    authentication_classes = []
+    permission_classes = []
+
+    def get(self, request, *args, **kwargs):
+        res_dict = {'data_time': datetime.datetime.now()}
+        try:
+            import psutil
+            logging.info('start----statistic---sysinfo---')
+            res_dict['cpu_usage'] = psutil.cpu_percent(0)
+            res_dict['memory_usage'] = psutil.virtual_memory().percent
+            res_dict['disk_usage'] = psutil.disk_usage("/").percent
+        except Exception as e:
+            logging.info('error----statistic--random-sysinfo---{}'.format(str(e)))
+            res_dict['cpu_usage'] = random.randint(0, 100)
+            res_dict['memory_usage'] = random.randint(0, 100)
+            res_dict['disk_usage'] = random.randint(0, 100)
         return Response(res_dict)
