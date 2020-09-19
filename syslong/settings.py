@@ -69,8 +69,8 @@ REST_FRAMEWORK = {
             'common.throttling.UserRateThrottle'   # 登陆用户
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/m',  # 每分钟可以请求三次
-        'user': '30/m'  # 每分钟可以请求三十次
+        'anon': '300/m',  # 每分钟可以请求三次
+        'user': '3000/m'  # 每分钟可以请求三十次
     },
 }
 
