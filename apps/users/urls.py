@@ -22,16 +22,24 @@ from .views import PermsView
 from .views import RoleView
 from .views import PermsListView
 from .views import RoleToUsersView
+from .views import DataPermsToRole
+from .views import UpdateUserInfo
+from .views import UpateUserPwd
+from .views import GetSysInfo
 
 router = DefaultRouter()
 router.register('users', UsersView, basename='users_oper')
 router.register('roles', RoleView, basename='roles_oper')
 urlpatterns = [
-    url(r'^login$', LoginView.as_view()),
-    url(r'^menu$', MenuView.as_view()),
+    url(r'^login/$', LoginView.as_view()),
+    url(r'^menu/$', MenuView.as_view()),
     url(r'^perms/$', PermsView.as_view()),
     url(r'^permslist/$', PermsListView.as_view()),
     url(r'^role-to-user/$', RoleToUsersView.as_view()),
+    url(r'^data-to-role/', DataPermsToRole.as_view()),
+    url(r'^upload/user/headimg/$', UpdateUserInfo.as_view()),
+    url(r'^chagepwd/$', UpateUserPwd.as_view()),
+    url(r'^get/sysinfo/$', GetSysInfo.as_view()),
     # url(r'^users', UsersView.as_view({'get': 'list'})),
     url('', include(router.urls))
 ]

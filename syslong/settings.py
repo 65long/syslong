@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 SECRET_KEY = 'd_i0t+719xa7z-k^vs6ethvz2hw!w*^tw3f$7h0ew13kki+eqh'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,6 +48,10 @@ INSTALLED_APPS = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = (
+    'token',
+    'content-type',
+)
 
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(minutes=1000)
@@ -55,7 +59,7 @@ JWT_AUTH = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': ['common.auth.SyslongAuth'],
-    'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
+    # 'DEFAULT_PERMISSION_CLASSES': ['common.perm.UserPermission'],
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.CommonPagination',  # 分页器
     'PAGE_SIZE': 10,  # 每页显示多少个
     'EXCEPTION_HANDLER': 'common.exception_handler.exception_handler',
@@ -65,8 +69,8 @@ REST_FRAMEWORK = {
             'common.throttling.UserRateThrottle'   # 登陆用户
     ],
     'DEFAULT_THROTTLE_RATES': {
-        'anon': '3/m',  # 每分钟可以请求三次
-        'user': '30/m'  # 每分钟可以请求三十次
+        'anon': '300/m',  # 每分钟可以请求三次
+        'user': '3000/m'  # 每分钟可以请求三十次
     },
 }
 
@@ -106,23 +110,23 @@ WSGI_APPLICATION = 'syslong.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'syslong',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': '5432',  # Set to empty string for default.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'syslong',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'localhost',
+#         'PORT': '5432',  # Set to empty string for default.
+#     }
+# }
 
 # redis缓存
 CACHES = {
@@ -136,6 +140,20 @@ CACHES = {
     "sessions": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "redis-token": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "redis-pagedata": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -176,7 +194,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -187,10 +205,13 @@ STATIC_URL = '/static/'
 # 静态文件收集的地方
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 AUTH_USER_MODEL = 'users.UserProfile'
 
 # 关闭末尾为/的错误
-APPEND_SLASH=False
+APPEND_SLASH = False
 
 # 配置简单日志项
 logging.basicConfig(level=logging.DEBUG,

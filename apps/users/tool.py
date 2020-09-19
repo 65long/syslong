@@ -1,1 +1,1 @@
-from .models import WebRes
+from .models import WebResource
