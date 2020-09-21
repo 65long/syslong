@@ -47,6 +47,8 @@ class LoginView(APIView):
                         nickname=user.nickname or '地表最强',
                         date_joined=user.date_joined,
                         last_login=user.last_login,
+                        show_tagsview=user.show_tagsview,
+                        show_avatar=user.show_avatar,
                         status=200)
             user.last_login = datetime.datetime.now()
             user.save()
@@ -418,7 +420,6 @@ class GetSysInfo(APIView):
         res_dict = {'data_time': datetime.datetime.now()}
         try:
             import psutil
-            logging.info('start----statistic---sysinfo---')
             res_dict['cpu_usage'] = psutil.cpu_percent(0)
             res_dict['memory_usage'] = psutil.virtual_memory().percent
             res_dict['disk_usage'] = psutil.disk_usage("/").percent

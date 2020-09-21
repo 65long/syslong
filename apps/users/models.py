@@ -54,9 +54,9 @@ class WebResource(models.Model):
         verbose_name_plural = verbose_name
 
 
-class RoleGroup(models.Model):
-    """角色组"""
-    name = models.CharField(verbose_name='角色组名称', max_length=50, unique=True)
+# class RoleGroup(models.Model):
+#     """角色组"""
+#     name = models.CharField(verbose_name='角色组名称', max_length=50, unique=True)
 
 
 class Role(models.Model):
@@ -117,6 +117,8 @@ class UserProfile(AbstractUser):
     role = models.ManyToManyField(verbose_name='用户角色', to='Role', related_name='role_user')
     dept = models.ManyToManyField(verbose_name='用户组织', to='Organization', related_name='dept_user')
     position = models.CharField(verbose_name='职位', max_length=20, null=True, blank=True)
+    show_tagsview = models.BooleanField(verbose_name='开启页签模式', blank=True, default=True)
+    show_avatar = models.BooleanField(verbose_name='导航栏显示头像', blank=True, default=True)
 
     def __str__(self):
         return self.username
